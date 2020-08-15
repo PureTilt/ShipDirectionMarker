@@ -1,0 +1,10 @@
+{
+	"plugins":{
+		"PTilt_shipDirection":"data.scripts.plugins.PTilt_shipDirection",
+	},
+	"graphics":{
+		"marker":{
+			"direction2":"graphics/icons/PT_dirmarker2.png",
+		},
+	},
+}
