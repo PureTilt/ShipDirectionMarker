@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
 
-    public static final String ID = "PT_testmod";
+    public static final String ID = "PT_DirectionMarker";
     public static final String SETTINGS_PATH = "ShipDirectionMarker.ini";
 
     private CombatEngineAPI engine;
@@ -37,7 +37,8 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
             enemyIsOn = true,
             reCalcForPlayer = false,
             useShieldShip = true,
-            useShieldTarget = true;
+            useShieldTarget = true,
+            disableOnPause;
 
     private ShipAPI
             target,
@@ -59,6 +60,7 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
             JSONObject cfg = Global.getSettings().getMergedJSONForMod( SETTINGS_PATH, ID);
             shipToggleKey = cfg.getInt("PlayerShipToggleButton");
             targetToggleKey = cfg.getInt("TargetShipToggleButton");
+            disableOnPause = cfg.getBoolean("DisableMarkerOnPause");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -101,25 +103,14 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
     @Override
     public void advance(float amount, List<InputEventAPI> events) {
 
-
-        if (engine == null) {
-            return;
-        }
-
-        /*
-        if (engine.isPaused()) {
-            return;
-        }
-
-         */
-
+        if (engine == null) return;
+        if (engine.isPaused() && disableOnPause) return;
         if(engine.isUIShowingDialog())return;
         if(engine.getCombatUI() != null && engine.getCombatUI().isShowingCommandUI())return;
         if(engine.getPlayerShip() == null)return;
         if(engine.getPlayerShip().getLocation() == null)return;
         if(Global.getCurrentState() != GameState.COMBAT)return;
         if(engine.isCombatOver())return;
-
 
         glPushMatrix();
         glLoadIdentity();
