@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glPopAttrib;
+
+import static javax.swing.UIManager.getColor;
 
 public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
 
@@ -50,7 +53,9 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
             shipToggleKey,
             targetToggleKey;
 
-
+    Color
+            allyColor = Misc.getPositiveHighlightColor(),
+            enemyColor = Misc.getNegativeHighlightColor();
 
     @Override
     public void init(CombatEngineAPI engine) {
@@ -61,20 +66,23 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
             shipToggleKey = cfg.getInt("PlayerShipToggleButton");
             targetToggleKey = cfg.getInt("TargetShipToggleButton");
             disableOnPause = cfg.getBoolean("DisableMarkerOnPause");
+            isON = cfg.getBoolean("PayerMarkerOnAtStartOfCombat");
+            enemyIsOn = cfg.getBoolean("TargetMarkerOnAtStartOfCombat");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
 
+
         //float sizeMult = 1.5f;
 
         arrow = Global.getSettings().getSprite("marker", "direction2");
-        arrow.setColor(Misc.getPositiveHighlightColor());
+        arrow.setColor(allyColor);
         arrow.setSize(arrow.getWidth(),arrow.getHeight());
         arrow.setNormalBlend();
 
         arrowTarget = Global.getSettings().getSprite("marker", "direction2");
-        arrowTarget.setColor(Misc.getNegativeHighlightColor());
+        arrowTarget.setColor(enemyColor);
         arrowTarget.setSize(arrow.getWidth(),arrow.getHeight());
         arrowTarget.setNormalBlend();
 
@@ -174,8 +182,8 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
                     float collRad = target.getCollisionRadius();
 
                     //change color
-                    if (target.getOwner() == playerShip.getOwner())arrowTarget.setColor(Misc.getPositiveHighlightColor());
-                    else arrowTarget.setColor(Misc.getNegativeHighlightColor());
+                    if (target.getOwner() == playerShip.getOwner())arrowTarget.setColor(allyColor);
+                    else arrowTarget.setColor(enemyColor);
 
                     //chose what to use
                     if (shieldRad > collRad * 1.5f || shieldRad < collRad * 0.3f) {
