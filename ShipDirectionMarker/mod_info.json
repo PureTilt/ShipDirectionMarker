@@ -2,8 +2,9 @@
 	"id":"PT_ShipDirectionMarker",
 	"name":"Ship Direction Marker",
 	"author":"PureTilt",
-	"version":"1.1.2",
+	"version":"1.2.0",
 	"description":"Add marker to indicate current movement direction of player ship.",
 	"gameVersion":"0.9.1a-RC8",
 	"jars":["jars/ShipDirectionMarker.jar"],
+	"utility": true,
 }
