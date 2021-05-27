@@ -8,10 +8,10 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.util.Misc;
-import data.scripts.util.MagicRender;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lazywizard.lazylib.combat.CombatUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -58,8 +58,8 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
     private float
             shipToggleKey,
             targetToggleKey,
-    allToggleKey,
-    fightersToggleKey;
+            allToggleKey,
+            fightersToggleKey;
 
     @Override
     public void init(CombatEngineAPI engine) {
@@ -261,7 +261,7 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
             for (ShipAPI ship : engine.getShips()) {
                 if (!engine.isEntityInPlay(ship)) continue;
                 if (isON && ship == playerShip) continue;
-                if (!MagicRender.screenCheck(0.5f, ship.getLocation())) continue;
+                if (!screenCheck(0.5f, ship.getLocation())) continue;
                 if (!ship.isAlive()) continue;
                 if (ship.isHulk()) continue;
                 if (ship.getHullSize() == ShipAPI.HullSize.FIGHTER && !drawOnForFighters) continue;
@@ -271,10 +271,9 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
                 float collRad = ship.getCollisionRadius();
 
                 //change color
-                if (ship.getOwner() == playerShip.getOwner()){
+                if (ship.getOwner() == playerShip.getOwner()) {
                     arrowTarget.setColor(allyColor);
-                }
-                else arrowTarget.setColor(enemyColor);
+                } else arrowTarget.setColor(enemyColor);
 
                 //chose what to use
                 float collRadTarget;
@@ -308,5 +307,11 @@ public class PTilt_shipDirection extends BaseEveryFrameCombatPlugin {
         glPopAttrib();
         glColor4f(1, 1, 1, 1);
         glPopMatrix();
+    }
+
+    public static boolean screenCheck(float distance, Vector2f point) {
+        float space = Global.getCombatEngine().getViewport().getVisibleWidth();
+        space = space / 2.0F * (distance + 1.4F);
+        return MathUtils.isWithinRange(point, Global.getCombatEngine().getViewport().getCenter(), space);
     }
 }
